@@ -1,0 +1,20 @@
+{
+  "name": "source-review",
+  "version": "0.0.0",
+  "homepage": "https://github.com/mugippoi/source-review",
+  "authors": [
+    "mugippoi <mugippoi@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "ace-builds": "~1.2.0",
+    "togetherjs": "~0.5.6"
+  }
+}

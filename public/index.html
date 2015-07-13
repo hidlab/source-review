@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title>Source Viewer</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
+    <script type="text/javascript" src="ace-builds/src-min-noconflict/ace.js"></script>
+    <script type="text/javascript" src="ace-builds/src-min-noconflict/ext-modelist.js"></script>
+    <script>
+        var TogetherJSConfig_autoStart = false;
+        //var TogetherJSConfig_hubBase = "http://myhub.server:8080";
+        var TogetherJSConfig_suppressInvite = true;
+        var TogetherJSConfig_cloneClicks = false;
+        var TogetherJSConfig_dontShowClicks = true;
+        var TogetherJSConfig_suppressJoinConfirmation = true;
+        var TogetherJSConfig_ignoreForms = [':password','select','input'];
+    </script>
+    <script src="//togetherjs.com/togetherjs-min.js"></script>
+
+  </head>
+  <body>
+    <h1 class="title">Source Review</h1>
+    <button id="start-togetherjs" type="button" onclick="TogetherJS(this); return false" data-end-togetherjs-html="End TogetherJS"> Start TogetherJS</button>
+    <div id="drop_zone">Drop files here</div>
+    <output id="list"></output>
+
+    <script>
+      var $id = function(id) { return document.getElementById(id); }
+      
+      window.onload = function()
+      {
+        // ドロップ時イベントを登録
+        $id("drop_zone").addEventListener("dragover", onCancel, false);
+        $id("drop_zone").addEventListener("dragenter", onCancel, false);
+        $id("drop_zone").addEventListener("drop", onDropFile, false);
+      };
+      // ファイル変更時イベント
+      var onChangeFile = function(e)
+      {
+        var file = e.target.files[0];
+        readFile(file);
+      };
+
+      // ファイルドロップ時イベント
+      var onDropFile = function(e)
+      {
+        e.preventDefault();
+        var file = e.dataTransfer.files[0];
+        readFile(file);
+      };
+
+      // キャンセル処理
+      var onCancel = function(e)
+      {
+        if(e.preventDefault) { e.preventDefault(); }
+        return false;
+      };
+
+      var readFile = function(file)
+      {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var editor = ace.edit("reader");
+          editor.setValue(e.target.result);
+          var modelist = ace.require("ace/ext/modelist");
+          var mode = modelist.getModeForPath(file.name).mode;
+          var session = editor.getSession();
+          session.setScrollTop(0);
+          session.setMode({
+            path: "ace/mode/" + mode,
+            v: Date.now() 
+          });
+
+          var editor2 = ace.edit("editor");
+          editor2.setValue(e.target.result);
+          editor2.getSession().setMode({
+            path: "ace/mode/" + mode,
+            v: Date.now() 
+          });
+        };
+
+        reader.readAsText(file, 'utf-8');
+      };
+    </script>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div id="reader" class="col-md-6" style="height:45em"></div>
+        <div id="editor" class="col-md-6" style="height:45em"></div>
+      </div>
+      <script language="javascript">
+        var editor = ace.edit("reader");
+        editor.setTheme("ace/theme/twilight");
+        editor.setReadOnly(true);
+        editor.getSession().setUseWrapMode(true);
+
+        var editor2 = ace.edit("editor");
+        editor2.setTheme("ace/theme/twilight");
+        editor2.getSession().setUseWrapMode(true);
+
+        editor.getSession().on('changeScrollTop', function(scroll) {
+          editor2.getSession().setScrollTop(parseInt(scroll) || 0)
+        });
+      </script>
+    </div>
+  </body>
+</html>
