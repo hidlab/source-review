@@ -67,17 +67,18 @@
           var modelist = ace.require("ace/ext/modelist");
           var mode = modelist.getModeForPath(file.name).mode;
           var session = editor.getSession();
+          var time = Date.now();
           session.setScrollTop(0);
           session.setMode({
-            path: "ace/mode/" + mode,
-            v: Date.now() 
+            path: mode,
+            v: time
           });
 
           var editor2 = ace.edit("editor");
           editor2.setValue(e.target.result);
           editor2.getSession().setMode({
-            path: "ace/mode/" + mode,
-            v: Date.now() 
+            path: mode,
+            v: time
           });
         };
 
